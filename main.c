@@ -1,10 +1,33 @@
 #include <stdio.h>
 
-// Flushing the buffer after the fgets (extra characters).
-void flush_input() {
-	int ch;
-	while((ch = getchar()) != '\n' && ch != EOF);
+#define IP_STRLEN 17
+
+/**
+ * Manualy implemented function for reading line as replacment for fgets.
+ * Most importantly, this function will avoid limitations related with the
+ * fgets, and will clear the buffer after the line is read (and if we have)
+ * more characters inserted then its initially planed.
+ */
+int readln(char s[], int maxlen) {
+	char ch;
+	int i = 0;
+	int char_remain = 1;
+
+	while(char_remain) {
+		ch = getchar();
+		if((ch == '\n') || (ch == EOF)) {
+			char_remain = 0;
+		}
+		else if (i < maxlen - 1) {
+			s[i] = ch;
+			i++;
+		}
+	}
+	s[i] = '\0';
+	return i;
 }
+
+
 
 /**
  * Main function, which will receive argument as ip address, or
@@ -12,16 +35,14 @@ void flush_input() {
  * execution.
  */
 int main(int argc, char **argv) {
-	char ip_address[17];
-	char subnet_mask[17];
+	char ip_address[IP_STRLEN];
+	char subnet_mask[IP_STRLEN];
 
 	printf("Insert IP address (decimal dotted notation): ");
-	fgets(ip_address, 17, stdin);
-	flush_input();
+	readln(ip_address, IP_STRLEN);
 
 	printf("Insert subnet mask (decimal dotted notation): ");
-	fgets(subnet_mask, 17, stdin);
-	flush_input();
+	readln(subnet_mask, IP_STRLEN);
 
 	printf("Inserted ip address %s\n", ip_address);
 	printf("Inserted subnet mask %s\n", subnet_mask);
