@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define IP_STRLEN 17
+
 
 /**
  * Manualy implemented function for reading line as replacment for fgets.
@@ -28,6 +30,22 @@ int readln(char s[], int maxlen) {
 }
 
 
+char * ask_ip_input() {
+	char *ip_address = malloc(IP_STRLEN * sizeof(char));
+	printf("Insert IP address (decimal dotted notation): ");
+	readln(ip_address, IP_STRLEN);
+	return ip_address;
+}
+
+
+char * ask_subnet_mask_input() {
+	char *subnet_mask = malloc(IP_STRLEN * sizeof(char));
+	printf("Insert subnet mask (decimal dotted notation): ");
+	readln(subnet_mask, IP_STRLEN);
+	return subnet_mask;
+}
+
+
 
 /**
  * Main function, which will receive argument as ip address, or
@@ -35,14 +53,11 @@ int readln(char s[], int maxlen) {
  * execution.
  */
 int main(int argc, char **argv) {
-	char ip_address[IP_STRLEN];
-	char subnet_mask[IP_STRLEN];
+	char *ip_address;
+	char *subnet_mask;
 
-	printf("Insert IP address (decimal dotted notation): ");
-	readln(ip_address, IP_STRLEN);
-
-	printf("Insert subnet mask (decimal dotted notation): ");
-	readln(subnet_mask, IP_STRLEN);
+	ip_address = ask_ip_input();
+	subnet_mask = ask_subnet_mask_input();
 
 	printf("Inserted ip address %s\n", ip_address);
 	printf("Inserted subnet mask %s\n", subnet_mask);
