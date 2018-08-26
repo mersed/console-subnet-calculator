@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define IP_STRLEN 17
+// Max length of ip chars plus one null terminator
+#define IP_STRLEN 18
 
 
 /**
@@ -30,6 +31,60 @@ int readln(char s[], int maxlen) {
 }
 
 
+/**
+ * Checks is IPV4 string valid.
+ * Does it contains valid IPV4 address.
+ */
+int is_valid_ipv4 (char *str) {
+    int segs = 0;   // Segment count.
+    int chcnt = 0;  // Character count within segment.
+    int accum = 0;  // Accumulator for segment.
+
+    // Catch NULL pointer.
+    if (str == NULL) return 0;
+
+    // Process every character in string.
+    while (*str != '\0') {
+
+        // Segment changeover.
+        if (*str == '.') {
+        	// Must have some digits in segment.
+            if (chcnt == 0) return 0;
+
+            // Limit number of segments.
+            if (++segs == 4) return 0;
+
+            // Reset segment values and restart loop.
+            chcnt = accum = 0;
+            str++;
+            continue;
+        }
+
+       	// Check numeric.
+        if ((*str < '0') || (*str > '9')) return 0;
+
+        // Acumulate and check segment (cannot be greather then 255)
+        if ((accum = accum * 10 + *str - '0') > 255)
+            return 0;
+
+        chcnt++;
+        str++;
+    }
+
+    /* Check enough segments and enough characters in last segment. */
+
+    if (segs != 3)
+        return 0;
+
+    if (chcnt == 0)
+        return 0;
+
+    /* Address okay. */
+
+    return 1;
+}
+
+
 char * ask_ip_input() {
 	char *ip_address = malloc(IP_STRLEN * sizeof(char));
 	printf("Insert IP address (decimal dotted notation): ");
@@ -55,9 +110,26 @@ char * ask_subnet_mask_input() {
 int main(int argc, char **argv) {
 	char *ip_address;
 	char *subnet_mask;
+	int force_arg_insertion = 0;
 
-	ip_address = ask_ip_input();
-	subnet_mask = ask_subnet_mask_input();
+	if(argc < 3) {
+		force_arg_insertion = 1;
+	}
+	else {
+		// lets check that this what is inserted in correct format
+		ip_address = argv[1];
+		subnet_mask = argv[2];
+
+		if(is_valid_ipv4(ip_address) == 0 || is_valid_ipv4(subnet_mask) == 0) {
+			printf("IP address or subnet mask you inserted are invalid ... Please insert proper ones bellow \n");
+			force_arg_insertion = 1;
+		}
+	}
+
+	if(force_arg_insertion == 1) {
+		ip_address = ask_ip_input();
+		subnet_mask = ask_subnet_mask_input();
+	}
 
 	printf("Inserted ip address %s\n", ip_address);
 	printf("Inserted subnet mask %s\n", subnet_mask);
