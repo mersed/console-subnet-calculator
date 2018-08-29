@@ -126,12 +126,20 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if(force_arg_insertion == 1) {
+	while(force_arg_insertion == 1) {
 		ip_address = ask_ip_input();
 		subnet_mask = ask_subnet_mask_input();
+
+		if(!(is_valid_ipv4(ip_address) == 0) && !(is_valid_ipv4(subnet_mask) == 0)) {
+			force_arg_insertion = 0;
+		}
+		else {
+			printf("IP address or subnet mask you inserted are invalid ... Please try again.\n");
+		}
 	}
 
 	printf("Inserted ip address %s\n", ip_address);
 	printf("Inserted subnet mask %s\n", subnet_mask);
+	printf("-----------------------------------------\n");
 	return 0;
 }
